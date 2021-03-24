@@ -37,6 +37,7 @@ private:
 	SDL_Texture *m_texture;
 	Uint32 *m_buffer;
 	Uint32 *m_buffer2;
+	TTF_Font *m_ttfFont;
 //	Uint8 *m_screenObjects;
 public:
 	Screen();

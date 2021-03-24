@@ -12,14 +12,10 @@ using namespace std;
 
 namespace markort147 {
 
-Screen::Screen() :
-				m_window(NULL), m_renderer(NULL), m_texture(NULL), m_buffer(NULL), m_buffer2(
-						NULL) {
-
+Screen::Screen() : m_window(NULL), m_renderer(NULL), m_texture(NULL), m_buffer(NULL), m_buffer2(NULL), m_ttfFont(NULL) {
 	screenWidth = SCREEN_WIDTH;
 	screenHeight = SCREEN_HEIGHT;
 	screenRatio = (float) screenWidth / SCREEN_HEIGHT;
-
 }
 
 void Screen::resize(int newWidth, int newHeight) {
@@ -32,6 +28,12 @@ bool Screen::init() {
 
 	if(TTF_Init() < 0) {
 		return false;
+	}
+
+	m_ttfFont = TTF_OpenFont("./font/arial.ttf", 50); //this opens a font style and sets a size
+
+	if(m_ttfFont == NULL) {
+		cout << "font null" << endl;
 	}
 
 //	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -216,17 +218,12 @@ void Screen::drawSphere(Ball ball, Uint8 red, Uint8 green, Uint8 blue) {
 }
 
 void Screen::drawText(string text) {
-	TTF_Font* sans = TTF_OpenFont("./font/arial.ttf", 50); //this opens a font style and sets a size
-
-	if(sans == NULL) {
-		cout << "font null" << endl;
-	}
 
 	SDL_Color white = {255, 255, 255};  // this is the color in rgb format, maxing out all would give you the color white, and it will be your text's color
 
 	const char * c = text.c_str();
 
-	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(sans, c, white); // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
+	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(m_ttfFont, c, white); // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
 
 	SDL_Texture* message = SDL_CreateTextureFromSurface(m_renderer, surfaceMessage); //now you can convert it into a texture
 

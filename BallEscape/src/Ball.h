@@ -42,7 +42,6 @@ public:
 	void setMoving(bool);
 	void resize(double);
 	void setDirection(int);
-	static bool ballCollides(Ball, Ball);
 
 	double getXLowerBound() const {
 		return xLowerBound;

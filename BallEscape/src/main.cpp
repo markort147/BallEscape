@@ -17,10 +17,12 @@
 using namespace std;
 using namespace markort147;
 
+bool ballCollides(Ball ball1, Ball ball2, Screen screen);
+
 
 int main(int argc, char *argv[]) {
 
-	Screen screen;
+	Screen screen(Screen::SCREEN_SIZE_800_600);
 
 	if (screen.init() == false) {
 		cout << "Error initializing SDL." << endl;
@@ -39,13 +41,16 @@ int main(int argc, char *argv[]) {
 
 	int elapsed;
 	Uint8 score = 0;
-	Uint8 oldScore = 0;
+//	Uint8 oldScore = 0;
 
 	bool quit = false;
 	//	Uint8 *screenObjects = new Uint8[Screen::SCREEN_WIDTH * Screen::SCREEN_HEIGHT]();
 
-	cout << "Usa le frecce per muovere la palla" << endl;
-	cout << "Usa la barra spaziatrice per fermare la palla" << endl;
+	cout << "Press the arrows to move the ball" << endl;
+	cout << "Press the space-bar to stop or start the ball" << endl;
+	cout << "Press 1 to set screen size 400x300" << endl;
+	cout << "Press 2 to set screen size 800x600" << endl;
+	cout << "Press 3 to set screen size 1200x900" << endl;
 
 	int lastBonusUpdateTime = SDL_GetTicks();
 
@@ -68,6 +73,15 @@ int main(int argc, char *argv[]) {
 				case SDL_SCANCODE_SPACE:
 					ball.setMoving(!ball.isMoving());
 //					cout << "pressed space" << endl;
+					break;;
+				case SDL_SCANCODE_1:
+					screen.resize(Screen::SCREEN_SIZE_400_300);
+					break;
+				case SDL_SCANCODE_2:
+					screen.resize(Screen::SCREEN_SIZE_800_600);
+					break;
+				case SDL_SCANCODE_3:
+					screen.resize(Screen::SCREEN_SIZE_1200_900);
 					break;
 				default:
 					break;
@@ -75,18 +89,19 @@ int main(int argc, char *argv[]) {
 			} else if (eventType == SDL_QUIT) {
 				ball.setMoving(false);
 				quit = true;
-			} else if (eventType == SDL_WINDOWEVENT) {
-				if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-					screen.resize(event.window.data1, event.window.data2);
-					ball.resize(screen.getScreenRatio());
-					bonus1.resize(screen.getScreenRatio());
-					bonus2.resize(screen.getScreenRatio());
-					bonus3.resize(screen.getScreenRatio());
-					malus1.resize(screen.getScreenRatio());
-					malus2.resize(screen.getScreenRatio());
-					malus3.resize(screen.getScreenRatio());
-				}
 			}
+//			else if (eventType == SDL_WINDOWEVENT) {
+//				if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+//					screen.resize(event.window.data1, event.window.data2);
+//					ball.resize(screen.getScreenRatio());
+//					bonus1.resize(screen.getScreenRatio());
+//					bonus2.resize(screen.getScreenRatio());
+//					bonus3.resize(screen.getScreenRatio());
+//					malus1.resize(screen.getScreenRatio());
+//					malus2.resize(screen.getScreenRatio());
+//					malus3.resize(screen.getScreenRatio());
+//				}
+//			}
 		}
 
 		screen.clear();
@@ -96,37 +111,37 @@ int main(int argc, char *argv[]) {
 		//		cout << "x=" << x << endl;
 		//		cout << "y=" << y << endl;
 
-		if (bonus1.m_exist && Ball::ballCollides(ball, bonus1)) {
+		if (bonus1.m_exist && ballCollides(ball, bonus1, screen)) {
 			//			cout << "Got Bonus!" << endl;
 			if (score != 255)
 				score++;
 			bonus1.m_exist = false;
 		}
-		if (bonus2.m_exist && Ball::ballCollides(ball, bonus2)) {
+		if (bonus2.m_exist && ballCollides(ball, bonus2, screen)) {
 			//			cout << "Got Bonus!" << endl;
 			if (score != 255)
 				score++;
 			bonus2.m_exist = false;
 		}
-		if (bonus3.m_exist && Ball::ballCollides(ball, bonus3)) {
+		if (bonus3.m_exist && ballCollides(ball, bonus3, screen)) {
 			//			cout << "Got Bonus!" << endl;
 			if (score != 255)
 				score++;
 			bonus3.m_exist = false;
 		}
-		if (malus1.m_exist && Ball::ballCollides(ball, malus1)) {
+		if (malus1.m_exist && ballCollides(ball, malus1, screen)) {
 			//			cout << "Got Malus!" << endl;
 			if (score != 0)
 				score--;
 			malus1.m_exist = false;
 		}
-		if (malus2.m_exist && Ball::ballCollides(ball, malus2)) {
+		if (malus2.m_exist && ballCollides(ball, malus2, screen)) {
 			//			cout << "Got Malus!" << endl;
 			if (score != 0)
 				score--;
 			malus2.m_exist = false;
 		}
-		if (malus3.m_exist && Ball::ballCollides(ball, malus3)) {
+		if (malus3.m_exist && ballCollides(ball, malus3, screen)) {
 			//			cout << "Got Malus!" << endl;
 			if (score != 0)
 				score--;
@@ -178,10 +193,10 @@ int main(int argc, char *argv[]) {
 		string text = ss.str();
 		screen.update(text);
 
-		if (oldScore != score) {
-			oldScore = score;
-			cout << "Score: " << (int) score << endl;
-		}
+//		if (oldScore != score) {
+//			oldScore = score;
+//			cout << "Score: " << (int) score << endl;
+//		}
 
 	}
 	screen.close();
@@ -189,4 +204,24 @@ int main(int argc, char *argv[]) {
 	cout << "Bye!" << endl;
 
 	return 0;
+}
+
+bool ballCollides(Ball ball1, Ball ball2, Screen screen) {
+	double halfScreenWidth = screen.getScreenWidth() / 2;
+	double halfScreenHeight = screen.getScreenHeight() / 2;
+	double x1 = (ball1.m_x + 1) * halfScreenWidth;
+	double y1 = ball1.m_y * halfScreenWidth + halfScreenHeight;
+	double x2 = (ball2.m_x + 1) * halfScreenWidth;
+	double y2 = ball2.m_y * halfScreenWidth + halfScreenHeight;
+	int radius1 = ball1.m_radius;
+	int radius2 = ball2.m_radius;
+	bool output = false;
+
+	if ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)
+			<= (radius1 + radius2) * (radius1 + radius2)) {
+		output = true;
+	}
+
+	return output;
+
 }

@@ -109,25 +109,6 @@ Ball::~Ball() {
 	// TODO Auto-generated destructor stub
 }
 
-bool Ball::ballCollides(Ball ball1, Ball ball2) {
-	double HALF_SCREEN_WIDTH = Screen::SCREEN_WIDTH / 2;
-	double HALF_SCREEN_HEIGHT = Screen::SCREEN_HEIGHT / 2;
-	double x1 = (ball1.m_x + 1) * HALF_SCREEN_WIDTH;
-	double y1 = ball1.m_y * HALF_SCREEN_WIDTH + HALF_SCREEN_HEIGHT;
-	double x2 = (ball2.m_x + 1) * HALF_SCREEN_WIDTH;
-	double y2 = ball2.m_y * HALF_SCREEN_WIDTH + HALF_SCREEN_HEIGHT;
-	int radius1 = ball1.m_radius;
-	int radius2 = ball2.m_radius;
-	bool output = false;
-
-	if ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)
-			<= (radius1 + radius2) * (radius1 + radius2)) {
-		output = true;
-	}
-
-	return output;
-
-}
 
 double Ball::randPosX() {
 	return ((double)rand()/RAND_MAX)*(xUpperBound - xLowerBound) + xLowerBound;
